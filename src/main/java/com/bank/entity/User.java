@@ -1,5 +1,6 @@
 package com.bank.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,9 +25,10 @@ public class User{
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
 //    private List<Account> accounts;
-    private List<Account> accounts = new ArrayList<>();
+    @JsonIgnoreProperties("user")
+    @OneToMany(mappedBy = "user")
+    private List<Account> accounts;
 
     @Column(name="user_name", nullable = false)
     private String userName;

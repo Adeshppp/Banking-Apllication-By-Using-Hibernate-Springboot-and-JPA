@@ -1,13 +1,13 @@
 package com.bank.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +25,8 @@ public class Account{
     private Long id;
 
 //    @Column(name="user", nullable=false)
-    @ManyToOne
+    @JsonIgnoreProperties("acounts")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
@@ -34,8 +35,8 @@ public class Account{
     @Column(name="account_type")
     private String accountType;
 
-    @OneToMany(mappedBy="toAccountID", cascade = CascadeType.ALL)
-    private List<Transaction> transactions= new ArrayList<>();
+    @OneToMany(mappedBy="toAccountID")
+    private List<Transaction> transactions;
 
     @Column(name="account_balance")
     private Long balance;
@@ -53,4 +54,10 @@ public class Account{
     @Column(name="version")
     private Long version;
 
+
+    public Account( User user, String accountType, Long l) {
+        this.user=user;
+        this.accountType=accountType;
+        this.balance=l;
+    }
 }

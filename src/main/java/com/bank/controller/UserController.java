@@ -1,6 +1,5 @@
 package com.bank.controller;
 
-import com.bank.entity.Account;
 import com.bank.entity.User;
 import com.bank.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,12 +47,7 @@ public class UserController{
     }
 
 
-    //stack overflow error
-    @GetMapping("/accounts/{id}")
-    public ResponseEntity<List<Account>> getAllAccounts(@PathVariable Long id){
-        List<Account> allAccounts = userService.getAllAccountsCreated(id);
-        return ResponseEntity.ok(allAccounts);
-    }
+
 
     //testing purpose
     @DeleteMapping("/all")

@@ -19,13 +19,10 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-
-
-
     @PostMapping
     public ResponseEntity<Account> createAccount(@RequestBody CreateAccountRequest request) {
         //verify the details referring user
-        Account createdAccount = accountService.createAccount(request.getUser(), request.getAccountType());
+        Account createdAccount = accountService.createAccount(request.getUserId(), request.getAccountType());
         return ResponseEntity.status(HttpStatus.CREATED).body(createdAccount);
     }
 
@@ -53,10 +50,17 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/get")
+    @GetMapping
     public ResponseEntity<List<Transaction>> getTransactions(@RequestBody GetTransactionsRequest request){
         List<Transaction> transactions = accountService.getTransactionByUserId(request.getUserId(), request.getAccountType());
         return ResponseEntity.ok(transactions);
+    }
+
+    //stack overflow error
+    @GetMapping("/{id}")
+    public ResponseEntity<List<Account>> getAllAccounts(@PathVariable Long id){
+        List<Account> allAccounts = accountService.getAllAccountsCreated(id);
+        return ResponseEntity.ok(allAccounts);
     }
 
 

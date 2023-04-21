@@ -56,10 +56,7 @@ public class UserService{
         return userRepository.findAll();
     }
 
-    public List<Account> getAllAccountsCreated(Long id) {
-        User user = userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found with id "+id));
-        return user.getAccounts();
-    }
+
 
     public void deleteAllUsers() {
         userRepository.deleteAll();

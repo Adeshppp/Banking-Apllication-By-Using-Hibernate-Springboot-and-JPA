@@ -22,19 +22,32 @@ public class AccountService {
     @Autowired
     UserRepository userRepository;
 
+    UserService userService;
 
-    public Account createAccount(User user, String accountType) {
-        Account acc = getAccountByUser(user.getId(), accountType);
+    public User getUserById(Long id){
+        return userRepository.findById(id).orElseThrow(()-> new NotFoundException("User not found with id "+id));
+    }
+
+    public Account createAccount(Long userId, String accountType) {
+        Account acc = getAccountByUser(userId, accountType);
         if(acc == null){
             Account account = new Account();
-            account.setUser(user);
+            account.setUser(getUserById(userId));
             account.setAccountType(accountType);
             if(account.getBalance() == null) account.setBalance(0L);
-            user.getAccounts().add(account);
-            userRepository.save(user);
-        }
+            accountRepository.save(account);
+            return account;
+
+//            accountRepository.save(new Account(userService.getUserById(userId),accountType,0L));
+    }
 //        throw new AccountExistException("account already exists for this user.");
         return acc;
+    }
+
+    public List<Account> getAllAccountsCreated(Long id) {
+        User user = userRepository.findById(id).orElseThrow(()->new NotFoundException("User not found with id "+id));
+//        return user.getAccounts();
+        return accountRepository.findByUserId(id);
     }
 
 
@@ -49,6 +62,11 @@ public class AccountService {
 
     public void deleteAccount(Long userId, String accountType) {
         User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundException("User not found with id "+userId));
+        if(user.getAccounts().size()==0) throw new NotFoundException("User does not have any account.");
+        else if (user.getAccounts().size()==1) {
+            Account account = (Account) user.getAccounts();
+            if (account.getAccountType()!=accountType) throw new NotFoundException("User does not have "+accountType+" account.");
+        }
         Account account = getAccountByUser(userId,accountType);
         user.getAccounts().remove(account);
         userRepository.save(user);
