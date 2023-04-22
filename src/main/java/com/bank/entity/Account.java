@@ -18,15 +18,15 @@ import java.util.List;
 @Table(name="account")
 public class Account{
 
-    @Column
+    @Column(name = "account_id")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-//    @ManyToOne
     private Long id;
 
 //    @Column(name="user", nullable=false)
-    @JsonIgnoreProperties("acounts")
+    @JsonIgnoreProperties("accounts")
     @ManyToOne(fetch = FetchType.LAZY)
+//    @ManyToOne
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
@@ -35,12 +35,13 @@ public class Account{
     @Column(name="account_type")
     private String accountType;
 
-    @OneToMany(mappedBy="toAccountID")
+    @JsonIgnoreProperties("account")
+    @OneToMany(mappedBy="account")
     private List<Transaction> transactions;
 
     @Column(name="account_balance")
+//    private BigDecimal balance;// BigDecimal represents an arbitrary-precision decimal number.
     private Long balance;
-
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="created_at", updatable = false)
@@ -48,16 +49,18 @@ public class Account{
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name="last_accessed")
-    private Long lastAccessed;
+    private Date lastAccessed;
 
     @Version
     @Column(name="version")
     private Long version;
 
 
-    public Account( User user, String accountType, Long l) {
+    public Account( User user, String accountType, Long balance) {
         this.user=user;
         this.accountType=accountType;
-        this.balance=l;
+        this.balance=balance;
     }
 }
+
+

@@ -20,7 +20,7 @@ import java.util.List;
 @Table(name="user") //specify a name to a table
 public class User{
 
-//    @Column(name="user_id")
+    @Column(name="user_id")
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

@@ -2,6 +2,7 @@ package com.bank.service;
 
 import com.bank.entity.Account;
 import com.bank.entity.User;
+import com.bank.exceptions.AccountExistException;
 import com.bank.exceptions.NotFoundException;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.UserRepository;
@@ -29,6 +30,7 @@ public class UserService{
 
     public void deleteUser(Long userId){
         User user = userRepository.findById(userId).orElseThrow(()-> new NotFoundException("User not found with id "+ userId));
+        if(user.getAccounts().size()>0)  throw new AccountExistException("User have accounts.");
         List<Account> accounts = user.getAccounts();
         for(Account acc: accounts) accountService.deleteAccount(userId, acc.getAccountType());
         userRepository.delete(user);

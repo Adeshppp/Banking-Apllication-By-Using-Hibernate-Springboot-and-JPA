@@ -1,6 +1,7 @@
 package com.bank.entity;
 
 
+import com.fasterxml.jackson.annotation.JsonIncludeProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,15 +23,16 @@ public class Transaction{
     @Id
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="account_from_id")
-//    @Column(name="from_account", nullable = false)
-    private Account fromAccountID;
+    @JsonIncludeProperties("transactions")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
 
-    @ManyToOne
-    @JoinColumn(name="account_to_id")
-//    @Column(name="to_account", nullable = false)
-    private Account toAccountID;
+    @Column(name="fromAccount")
+    private Long fromAccountID;
+
+    @Column(name="toAccount")
+    private Long toAccountID;
 
     @Column(name="type")
     private String type;
@@ -44,3 +46,4 @@ public class Transaction{
     private Date createdAt;
 
 }
+//add accountId field to join account and transaction tables

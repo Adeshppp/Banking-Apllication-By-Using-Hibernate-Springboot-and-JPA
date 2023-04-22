@@ -50,21 +50,31 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping
+    @GetMapping("/transactions")
     public ResponseEntity<List<Transaction>> getTransactions(@RequestBody GetTransactionsRequest request){
         List<Transaction> transactions = accountService.getTransactionByUserId(request.getUserId(), request.getAccountType());
         return ResponseEntity.ok(transactions);
     }
 
-    //stack overflow error
-    @GetMapping("/{id}")
-    public ResponseEntity<List<Account>> getAllAccounts(@PathVariable Long id){
-        List<Account> allAccounts = accountService.getAllAccountsCreated(id);
-        return ResponseEntity.ok(allAccounts);
+    @GetMapping("/all/{id}")
+    public ResponseEntity<List<Account>> getAllAccountsById(@PathVariable Long id){
+        List<Account> allAccountsByID = accountService.getAllAccountsCreatedById(id);
+        return ResponseEntity.ok(allAccountsByID);
     }
 
 
+    //stack overflow error: calling tostring method infinitely
+    @GetMapping("/all")
+    public ResponseEntity<List<Account>> getAllAccounts(){
+        List<Account> allAccounts = accountService.getAllAccountsCreated();
+        return ResponseEntity.ok(allAccounts);
+    }
 
+    @GetMapping("/balance")
+    public ResponseEntity<Long> getAccountBalance(@RequestBody GetTransactionsRequest request){
+        Long balance = accountService.getBalance(request.getUserId(), request.getAccountType());
+        return ResponseEntity.ok(balance);
+    }
 }
 
 
