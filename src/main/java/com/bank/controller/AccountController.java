@@ -34,7 +34,7 @@ public class AccountController {
 
     @PutMapping("/fundtransfer")
     public ResponseEntity<Account> transferFund(@RequestBody TransferFundRequest request){
-        accountService.transferAmount(request.getFromAccountId(),request.getFromAccountType(),request.getToAccountId(), request.getToAccountType(),request.getAmount());
+        accountService.transferAmount(request.getFromUserId(),request.getFromAccountType(),request.getToUserId(), request.getToAccountType(),request.getAmount());
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 

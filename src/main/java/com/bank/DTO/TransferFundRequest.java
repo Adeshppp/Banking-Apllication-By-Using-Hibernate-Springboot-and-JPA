@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class TransferFundRequest {
-    private Long fromAccountId;
+    private Long fromUserId;
     private String fromAccountType;
-    private Long toAccountId;
+    private Long toUserId;
     private String toAccountType;
     private Long amount;
 

@@ -4,6 +4,7 @@ package com.bank.service;
 import com.bank.entity.Account;
 import com.bank.entity.Transaction;
 import com.bank.entity.User;
+import com.bank.exceptions.InsufficientFunds;
 import com.bank.exceptions.NotFoundException;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.TransactionRepository;
@@ -79,15 +80,24 @@ public class AccountService {
         }
     }
 
+
+    private boolean validateBalance(Long idFrom, String typeFrom, Long amount) {
+        if(getBalance(idFrom, typeFrom)<amount) return false;
+        return true;
+    }
+
     public void transferAmount(Long idFrom, String typeFrom, Long idTo, String typeTo, Long amount) {
-        Account accountFrom = getAccountByUser(idFrom,typeFrom);
-        Account accountTo = getAccountByUser(idTo,typeTo);
-        accountFrom.setBalance(accountFrom.getBalance()-amount);
-        accountTo.setBalance(accountTo.getBalance()+amount);
-        accountFrom.getTransactions().add(addTransaction(accountFrom,accountTo,"Sent", amount));
-        accountTo.getTransactions().add(addTransaction(accountFrom,accountTo,"Received", amount));
-        accountRepository.save(accountFrom);
-        accountRepository.save(accountTo);
+        if(validateBalance(idFrom,typeFrom, amount)) {
+            Account accountFrom = getAccountByUser(idFrom, typeFrom);
+            Account accountTo = getAccountByUser(idTo, typeTo);
+            accountFrom.setBalance(accountFrom.getBalance() - amount);
+            accountTo.setBalance(accountTo.getBalance() + amount);
+            accountFrom.getTransactions().add(addTransaction(accountFrom, accountTo, "Sent", amount));
+            accountTo.getTransactions().add(addTransaction(accountFrom, accountTo, "Received", amount));
+            accountRepository.save(accountFrom);
+            accountRepository.save(accountTo);
+        }
+        else throw new InsufficientFunds("Insufficient funds!");
     }
 
     public Transaction addTransaction(Account accountFrom, Account accountTo, String transactionType, Long amount){
@@ -115,10 +125,13 @@ public class AccountService {
     }
 
     public void withdrawAmount(Long id,String type,  Long amount) {
-        Account account = getAccountByUser(id, type);
-        account.setBalance(account.getBalance()-amount);
-        account.getTransactions().add(addTransaction(account,null,"Withdraw",amount));
-        accountRepository.save(account);
+        if(validateBalance(id, type, amount)) {
+            Account account = getAccountByUser(id, type);
+            account.setBalance(account.getBalance() - amount);
+            account.getTransactions().add(addTransaction(account, null, "Withdraw", amount));
+            accountRepository.save(account);
+        }
+        else throw new InsufficientFunds("Insufficient funds!");
     }
 
     public List<Transaction> getTransactionByUserId(Long userId, String accountType) {
