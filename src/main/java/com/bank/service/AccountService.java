@@ -82,8 +82,7 @@ public class AccountService {
 
 
     private boolean validateBalance(Long idFrom, String typeFrom, Long amount) {
-        if(getBalance(idFrom, typeFrom)<amount) return false;
-        return true;
+        return !(getBalance(idFrom, typeFrom)<amount);
     }
 
     public void transferAmount(Long idFrom, String typeFrom, Long idTo, String typeTo, Long amount) {
