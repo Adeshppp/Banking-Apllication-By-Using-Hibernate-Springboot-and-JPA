@@ -5,6 +5,7 @@ import com.bank.entity.Transaction;
 import com.bank.entity.User;
 import com.bank.exceptions.InsufficientFunds;
 import com.bank.exceptions.NotFoundException;
+import com.bank.exceptions.ZeroAmountException;
 import com.bank.repository.AccountRepository;
 import com.bank.repository.TransactionRepository;
 import com.bank.repository.UserRepository;
@@ -89,7 +90,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void transferAmount(Long idFrom, String typeFrom, Long idTo, String typeTo, Long amount) {
-                if(validateBalance(idFrom,typeFrom, amount)) {
+        if (amount<=0) throw new ZeroAmountException();
+        if(validateBalance(idFrom,typeFrom, amount)) {
             Account accountFrom = getAccountByUser(idFrom, typeFrom);
             Account accountTo = getAccountByUser(idTo, typeTo);
             accountFrom.setBalance(accountFrom.getBalance() - amount);
@@ -101,6 +103,8 @@ public class AccountServiceImpl implements AccountService {
         }
         else throw new InsufficientFunds("Insufficient funds!");
     }
+
+
 
     public Transaction addTransaction(Account accountFrom, Account accountTo, String transactionType, Long amount) {
         Transaction transaction = new Transaction();
@@ -120,6 +124,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void depositeAmount(Long userId, String type, Long amount) {
+        if (amount<=0) throw new ZeroAmountException();
         Account account = getAccountByUser(userId, type);
         account.setBalance(account.getBalance()+amount);
         account.getTransactions().add(addTransaction(account,null,"Deposite",amount));
@@ -127,6 +132,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     public void withdrawAmount(Long id, String type, Long amount) {
+        if (amount<=0) throw new ZeroAmountException();
         if(validateBalance(id, type, amount)) {
             Account account = getAccountByUser(id, type);
             account.setBalance(account.getBalance() - amount);
